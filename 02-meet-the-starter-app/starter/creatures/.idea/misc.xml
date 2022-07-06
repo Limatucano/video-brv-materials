@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/activity_creature.xml" value="0.17831813576494426" />
         <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/activity_main.xml" value="0.1705282669138091" />
         <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/fragment_all.xml" value="0.14814814814814814" />
         <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/fragment_favorites.xml" value="0.17831813576494426" />
         <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/list_item_creature.xml" value="0.5" />
+        <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/list_item_creature_with_food.xml" value="0.17831813576494426" />
+        <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/layout/list_item_food.xml" value="0.67" />
         <entry key="..\:/Projetos/video-brv-materials/02-meet-the-starter-app/starter/creatures/app/src/main/res/menu/navigation.xml" value="0.14814814814814814" />
       </map>
     </option>

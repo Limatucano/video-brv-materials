@@ -86,7 +86,7 @@ class FavoritesFragment : Fragment(), ItemDragListener {
   }
 
   private fun setupItemTouchHelper() {
-    itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
+    itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter,GridState.LIST))
     itemTouchHelper.attachToRecyclerView(favoritesRecyclerView)
   }
 

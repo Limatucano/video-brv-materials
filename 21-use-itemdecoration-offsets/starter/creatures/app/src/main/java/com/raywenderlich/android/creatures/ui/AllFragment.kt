@@ -33,24 +33,23 @@ package com.raywenderlich.android.creatures.ui
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.*
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CreatureStore
 import com.raywenderlich.android.creatures.model.GridState
 import kotlinx.android.synthetic.main.fragment_all.*
+import kotlinx.android.synthetic.main.fragment_favorites.*
 
 
-class AllFragment : Fragment() {
+class AllFragment : Fragment(), ItemDragListener {
 
-  private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
+  private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList(), this)
   private lateinit var layoutManager: GridLayoutManager
   private lateinit var listItemDecoration: RecyclerView.ItemDecoration
   private lateinit var gridItemDecoration: RecyclerView.ItemDecoration
   private lateinit var listMenuItem : MenuItem
   private lateinit var gridMenuItem: MenuItem
+  private lateinit var itemTouchHelper : ItemTouchHelper
   private var gridState = GridState.GRID
 
   companion object {
@@ -100,6 +99,9 @@ class AllFragment : Fragment() {
         }
       }
     })
+
+    setupItemTouchHelper()
+
   }
 
   override fun onPrepareOptionsMenu(menu: Menu) {
@@ -140,6 +142,15 @@ class AllFragment : Fragment() {
     adapter.jupiterSpanSize = spanCount
     creatureRecyclerView.removeItemDecoration(removeItemDecoration)
     creatureRecyclerView.addItemDecoration(addItemDecoration)
+  }
+
+  private fun setupItemTouchHelper(){
+    itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter, gridState))
+    itemTouchHelper.attachToRecyclerView(creatureRecyclerView)
+  }
+
+  override fun onItemDrag(viewHolder: RecyclerView.ViewHolder) {
+    itemTouchHelper.startDrag(viewHolder)
   }
 
 }

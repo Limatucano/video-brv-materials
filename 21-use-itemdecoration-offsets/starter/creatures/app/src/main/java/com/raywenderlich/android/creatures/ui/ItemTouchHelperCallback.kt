@@ -2,16 +2,18 @@ package com.raywenderlich.android.creatures.ui
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.raywenderlich.android.creatures.model.GridState
 
-class ItemTouchHelperCallback(private val listener: ItemTouchHelperListener) : ItemTouchHelper.Callback() {
+class ItemTouchHelperCallback(private val listener: ItemTouchHelperListener, private val gridState : GridState) : ItemTouchHelper.Callback() {
 
     override fun isLongPressDragEnabled(): Boolean = false
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
-    ): Int {
-        return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+    ): Int = when(gridState){
+        GridState.GRID -> makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT, 0)
+        GridState.LIST -> makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
     }
 
     override fun onMove(

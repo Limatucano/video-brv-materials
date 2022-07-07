@@ -1,9 +1,12 @@
 package com.raywenderlich.android.creatures.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CompositeItem
@@ -13,18 +16,27 @@ import kotlinx.android.synthetic.main.list_item_creature.view.*
 import kotlinx.android.synthetic.main.list_item_planet_header.view.*
 import java.util.*
 
-class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): RecyclerView.Adapter<CreatureAdapter.ViewHolder>(), ItemTouchHelperListener {
+class CreatureAdapter(
+    private val compositeItems: MutableList<CompositeItem>,
+    private val itemDragListener: ItemDragListener):
+    RecyclerView.Adapter<CreatureAdapter.ViewHolder>(),
+    ItemTouchHelperListener {
 
     enum class ViewType {
         HEADER, CREATURE
     }
-    class ViewHolder(itemView: View) : View.OnClickListener, RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) :
+        View.OnClickListener,
+        RecyclerView.ViewHolder(itemView),
+        ItemSelectedListener {
+
         private lateinit var creature: Creature
 
         init {
             itemView.setOnClickListener(this)
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         fun bind(composite: CompositeItem) {
             if(composite.isHeader){
                 itemView.headerName?.text = composite.header.name
@@ -35,6 +47,12 @@ class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): R
                     context.resources.getIdentifier(creature.uri, null, context.packageName))
                 itemView.fullName.text = creature.fullName
                 itemView.nickname.text = creature.nickname
+                itemView.handle.setOnTouchListener { _, motionEvent ->
+                    if(motionEvent.action == MotionEvent.ACTION_DOWN){
+                        itemDragListener.onItemDrag(this)
+                    }
+                    false
+                }
                 animateView(itemView)
             }
         }
@@ -52,6 +70,16 @@ class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): R
                 val animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.scale_animation)
                 viewToAnimate.animation = animation
             }
+        }
+
+        override fun onItemSelected() {
+            itemView.listeItemContainer.setBackgroundColor(
+                ContextCompat.getColor(itemView.context, R.color.selectedItem)
+            )
+        }
+
+        override fun onItemCleared() {
+            itemView.listeItemContainer.setBackgroundColor(0)
         }
 
     }
@@ -96,7 +124,7 @@ class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): R
                 Collections.swap(compositeItems, i, i - 1)
             }
         }
-        Favorites.saveFavorites(compositeItems.map { it.creature.id }, recyclerView.context)
+        //Favorites.saveFavorites(compositeItems.map { it.creature.id }, recyclerView.context)
         notifyItemMoved(fromPosition, toPosition)
         return true
     }

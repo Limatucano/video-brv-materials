@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CompositeItem
@@ -22,6 +24,11 @@ class CreatureAdapter(
     RecyclerView.Adapter<CreatureAdapter.ViewHolder>(),
     ItemTouchHelperListener {
 
+    var tracker : SelectionTracker<Long>? = null
+
+    init {
+        setHasStableIds(true)
+    }
     enum class ViewType {
         HEADER, CREATURE
     }
@@ -36,8 +43,20 @@ class CreatureAdapter(
             itemView.setOnClickListener(this)
         }
 
+        fun getItemDetails() : ItemDetailsLookup.ItemDetails<Long> =
+            object : ItemDetailsLookup.ItemDetails<Long>(){
+                override fun getPosition(): Int = adapterPosition
+
+                override fun getSelectionKey(): Long = itemId
+            }
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(composite: CompositeItem) {
+        fun bind(composite: CompositeItem, isSelected: Boolean) {
+            if(isSelected){
+                itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.selectedItem))
+            }else{
+                itemView.setBackgroundColor(0)
+            }
+
             if(composite.isHeader){
                 itemView.headerName?.text = composite.header.name
             }else{
@@ -73,13 +92,18 @@ class CreatureAdapter(
         }
 
         override fun onItemSelected() {
-            itemView.listeItemContainer.setBackgroundColor(
-                ContextCompat.getColor(itemView.context, R.color.selectedItem)
-            )
+            if(itemView.listeItemContainer != null){
+                itemView.listeItemContainer.setBackgroundColor(
+                    ContextCompat.getColor(itemView.context, R.color.selectedItem)
+                )
+            }
         }
 
         override fun onItemCleared() {
-            itemView.listeItemContainer.setBackgroundColor(0)
+            if(itemView.listeItemContainer != null){
+                itemView.listeItemContainer.setBackgroundColor(0)
+            }
+
         }
 
     }
@@ -95,7 +119,8 @@ class CreatureAdapter(
     override fun getItemCount() = compositeItems.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(compositeItems[position])
+        val isSelected = tracker?.isSelected(position.toLong()) ?: false
+        holder.bind(compositeItems[position], isSelected)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -104,6 +129,9 @@ class CreatureAdapter(
             false -> ViewType.CREATURE.ordinal
         }
     }
+
+    override fun getItemId(position: Int): Long = position.toLong()
+
     fun updateCreatures(creatures: List<CompositeItem>) {
         this.compositeItems.clear()
         this.compositeItems.addAll(creatures)

@@ -10,16 +10,27 @@ import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
+import com.raywenderlich.android.creatures.app.Constants
 //import com.raywenderlich.android.creatures.app.inflate
 import com.raywenderlich.android.creatures.model.Creature
 import kotlinx.android.synthetic.main.list_item_creature_card.view.*
+import kotlinx.android.synthetic.main.list_item_creature_card.view.creatureCard
+import kotlinx.android.synthetic.main.list_item_creature_card.view.creatureImage
+import kotlinx.android.synthetic.main.list_item_creature_card.view.fullName
+import kotlinx.android.synthetic.main.list_item_creature_card.view.nameHolder
+import kotlinx.android.synthetic.main.list_item_creature_card_jupiter.view.*
 
 class CreatureCardAdapter(private val creatures: MutableList<Creature>): RecyclerView.Adapter<CreatureCardAdapter.ViewHolder>() {
 
     enum class ScrollDirection {
         UP, DOWN
     }
+    enum class ViewType {
+        JUPITER, OTHER
+    }
     var scrollDirection = ScrollDirection.DOWN
+    var jupiterSpanSize = 2
+
     inner class ViewHolder(itemView: View) : View.OnClickListener, RecyclerView.ViewHolder(itemView) {
         private lateinit var creature: Creature
 
@@ -60,6 +71,9 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
                     itemView.nameHolder.setBackgroundColor(backgroundColor)
                     val textColor = if (isColorDark(backgroundColor)) Color.WHITE else Color.BLACK
                     itemView.fullName.setTextColor(textColor)
+                    if(itemView.slogan != null){
+                        itemView.slogan.setTextColor(textColor)
+                    }
                 }
             }
         }
@@ -73,15 +87,38 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature_card, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = when(viewType){
+        ViewType.JUPITER.ordinal -> ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.list_item_creature_card_jupiter,
+                parent,
+                false
+            )
+        )
+        ViewType.OTHER.ordinal -> ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.list_item_creature_card,
+                parent,
+                false
+            )
+        )
+        else -> throw IllegalArgumentException("invalid viewType")
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val creature = creatures[position]
+        return if(creature.planet == Constants.JUPITER) ViewType.JUPITER.ordinal else ViewType.OTHER.ordinal
     }
 
     override fun getItemCount() = creatures.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(creatures[position])
+    }
+
+    fun spanSizeAtPosition(position: Int): Int = when(creatures[position].planet){
+        Constants.JUPITER -> jupiterSpanSize
+        else -> 1
     }
 
 

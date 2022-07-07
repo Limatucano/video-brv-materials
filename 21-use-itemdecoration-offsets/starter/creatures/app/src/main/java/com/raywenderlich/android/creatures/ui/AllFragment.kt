@@ -46,7 +46,7 @@ import kotlinx.android.synthetic.main.fragment_all.*
 class AllFragment : Fragment() {
 
   private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
-  private lateinit var layoutManager: StaggeredGridLayoutManager
+  private lateinit var layoutManager: GridLayoutManager
   private lateinit var listItemDecoration: RecyclerView.ItemDecoration
   private lateinit var gridItemDecoration: RecyclerView.ItemDecoration
   private lateinit var listMenuItem : MenuItem
@@ -75,8 +75,13 @@ class AllFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
+    layoutManager = GridLayoutManager(context,2, GridLayoutManager.VERTICAL, false)
+    layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+      override fun getSpanSize(position: Int): Int {
+        return (adapter.spanSizeAtPosition(position))
+      }
 
+    }
     creatureRecyclerView.layoutManager = layoutManager
     creatureRecyclerView.adapter = adapter
 
@@ -132,6 +137,7 @@ class AllFragment : Fragment() {
 
   private fun updateRecyclerView(spanCount: Int, addItemDecoration: RecyclerView.ItemDecoration, removeItemDecoration: RecyclerView.ItemDecoration){
     layoutManager.spanCount = spanCount
+    adapter.jupiterSpanSize = spanCount
     creatureRecyclerView.removeItemDecoration(removeItemDecoration)
     creatureRecyclerView.addItemDecoration(addItemDecoration)
   }

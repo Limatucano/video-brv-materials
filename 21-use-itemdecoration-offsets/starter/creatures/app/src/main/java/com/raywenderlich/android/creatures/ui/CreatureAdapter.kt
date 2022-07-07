@@ -1,10 +1,11 @@
 package com.raywenderlich.android.creatures.ui
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
-import com.raywenderlich.android.creatures.app.inflate
 import com.raywenderlich.android.creatures.model.Creature
 import kotlinx.android.synthetic.main.list_item_creature.view.*
 
@@ -24,6 +25,7 @@ class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerVie
                     context.resources.getIdentifier(creature.uri, null, context.packageName))
             itemView.fullName.text = creature.fullName
             itemView.nickname.text = creature.nickname
+            animateView(itemView)
         }
 
         override fun onClick(view: View?) {
@@ -34,10 +36,18 @@ class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerVie
             }
         }
 
+        private fun animateView(viewToAnimate : View){
+            if(viewToAnimate.animation == null){
+                val animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.scale_animation)
+                viewToAnimate.animation = animation
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.list_item_creature))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature, parent, false)
+        return ViewHolder(view)
     }
 
     override fun getItemCount() = creatures.size

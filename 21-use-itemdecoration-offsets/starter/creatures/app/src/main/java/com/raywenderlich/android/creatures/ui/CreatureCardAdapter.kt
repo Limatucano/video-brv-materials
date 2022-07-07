@@ -3,19 +3,24 @@ package com.raywenderlich.android.creatures.ui
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
-import com.raywenderlich.android.creatures.app.inflate
+//import com.raywenderlich.android.creatures.app.inflate
 import com.raywenderlich.android.creatures.model.Creature
 import kotlinx.android.synthetic.main.list_item_creature_card.view.*
 
 class CreatureCardAdapter(private val creatures: MutableList<Creature>): RecyclerView.Adapter<CreatureCardAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View) : View.OnClickListener, RecyclerView.ViewHolder(itemView) {
+    enum class ScrollDirection {
+        UP, DOWN
+    }
+    var scrollDirection = ScrollDirection.DOWN
+    inner class ViewHolder(itemView: View) : View.OnClickListener, RecyclerView.ViewHolder(itemView) {
         private lateinit var creature: Creature
 
         init {
@@ -29,6 +34,7 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
             itemView.creatureImage.setImageResource(imageResource)
             itemView.fullName.text = creature.fullName
             setBackgroundColors(context, imageResource)
+            animateView(itemView)
         }
 
         override fun onClick(view: View?) {
@@ -38,7 +44,13 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
                 context.startActivity(intent)
             }
         }
-
+        private fun animateView(viewToAnimate: View){
+            if (viewToAnimate.animation == null){
+                val animId = if(scrollDirection == ScrollDirection.UP) R.anim.slide_from_top else R.anim.slide_from_bottom
+                val animation = android.view.animation.AnimationUtils.loadAnimation(viewToAnimate.context,animId)
+                viewToAnimate.animation = animation
+            }
+        }
         private fun setBackgroundColors(context: Context, imageResource: Int) {
             val image = BitmapFactory.decodeResource(context.resources, imageResource)
             Palette.from(image).generate { palette ->
@@ -62,7 +74,8 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.list_item_creature_card))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature_card, parent, false)
+        return ViewHolder(view)
     }
 
     override fun getItemCount() = creatures.size

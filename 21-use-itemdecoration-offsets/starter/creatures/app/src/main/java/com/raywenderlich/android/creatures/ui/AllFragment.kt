@@ -39,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CreatureStore
+import com.raywenderlich.android.creatures.model.GridState
 import kotlinx.android.synthetic.main.fragment_all.*
 
 
@@ -52,9 +53,6 @@ class AllFragment : Fragment() {
   private lateinit var gridMenuItem: MenuItem
   private var gridState = GridState.GRID
 
-  private enum class GridState {
-    LIST, GRID
-  }
   companion object {
     fun newInstance(): AllFragment {
       return AllFragment()

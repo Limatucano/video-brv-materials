@@ -32,15 +32,19 @@ package com.raywenderlich.android.creatures.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.Favorites
 import com.raywenderlich.android.creatures.model.Creature
 import com.raywenderlich.android.creatures.model.CreatureStore
+import com.raywenderlich.android.creatures.model.GridState
 import kotlinx.android.synthetic.main.activity_creature.*
 
 class CreatureActivity : AppCompatActivity() {
@@ -58,6 +62,7 @@ class CreatureActivity : AppCompatActivity() {
     }
   }
 
+  @RequiresApi(Build.VERSION_CODES.M)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_creature)
@@ -115,9 +120,17 @@ class CreatureActivity : AppCompatActivity() {
     }
   }
 
+  @RequiresApi(Build.VERSION_CODES.M)
   private fun setupFoods(){
     foodRecyclerView.layoutManager = GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false)
     foodRecyclerView.adapter = adapter
+    val dividerWidthInPixels = resources.getDimensionPixelSize(R.dimen.list_item_divider_height)
+    foodRecyclerView.addItemDecoration(
+      FoodItemDecoration(
+        ContextCompat.getColor(this,R.color.black),
+        dividerWidthInPixels
+      )
+    )
     val foods = CreatureStore.getCreatureFoods(creature)
     adapter.updateFoods(foods)
   }

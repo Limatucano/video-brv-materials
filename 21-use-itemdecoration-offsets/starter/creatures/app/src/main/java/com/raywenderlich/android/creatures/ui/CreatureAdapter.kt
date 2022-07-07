@@ -6,11 +6,16 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
+import com.raywenderlich.android.creatures.model.CompositeItem
 import com.raywenderlich.android.creatures.model.Creature
 import kotlinx.android.synthetic.main.list_item_creature.view.*
+import kotlinx.android.synthetic.main.list_item_planet_header.view.*
 
-class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerView.Adapter<CreatureAdapter.ViewHolder>() {
+class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): RecyclerView.Adapter<CreatureAdapter.ViewHolder>() {
 
+    enum class ViewType {
+        HEADER, CREATURE
+    }
     class ViewHolder(itemView: View) : View.OnClickListener, RecyclerView.ViewHolder(itemView) {
         private lateinit var creature: Creature
 
@@ -18,14 +23,18 @@ class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerVie
             itemView.setOnClickListener(this)
         }
 
-        fun bind(creature: Creature) {
-            this.creature = creature
-            val context = itemView.context
-            itemView.creatureImage.setImageResource(
+        fun bind(composite: CompositeItem) {
+            if(composite.isHeader){
+                itemView.headerName?.text = composite.header.name
+            }else{
+                this.creature = composite.creature
+                val context = itemView.context
+                itemView.creatureImage.setImageResource(
                     context.resources.getIdentifier(creature.uri, null, context.packageName))
-            itemView.fullName.text = creature.fullName
-            itemView.nickname.text = creature.nickname
-            animateView(itemView)
+                itemView.fullName.text = creature.fullName
+                itemView.nickname.text = creature.nickname
+                animateView(itemView)
+            }
         }
 
         override fun onClick(view: View?) {
@@ -46,19 +55,28 @@ class CreatureAdapter(private val creatures: MutableList<Creature>): RecyclerVie
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature, parent, false)
-        return ViewHolder(view)
+        return when(viewType) {
+            ViewType.HEADER.ordinal -> ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_planet_header, parent, false))
+            ViewType.CREATURE.ordinal -> ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature, parent, false))
+            else -> throw IllegalArgumentException("Ilegal viewType value")
+        }
     }
 
-    override fun getItemCount() = creatures.size
+    override fun getItemCount() = compositeItems.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(creatures[position])
+        holder.bind(compositeItems[position])
     }
 
-    fun updateCreatures(creatures: List<Creature>) {
-        this.creatures.clear()
-        this.creatures.addAll(creatures)
+    override fun getItemViewType(position: Int): Int {
+        return when(compositeItems[position].isHeader){
+            true -> ViewType.HEADER.ordinal
+            false -> ViewType.CREATURE.ordinal
+        }
+    }
+    fun updateCreatures(creatures: List<CompositeItem>) {
+        this.compositeItems.clear()
+        this.compositeItems.addAll(creatures)
         notifyDataSetChanged()
     }
 

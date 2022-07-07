@@ -1,12 +1,12 @@
 package com.raywenderlich.android.creatures.ui
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
-import com.raywenderlich.android.creatures.app.inflate
 import com.raywenderlich.android.creatures.model.Creature
 import com.raywenderlich.android.creatures.model.CreatureStore
 import kotlinx.android.synthetic.main.list_item_creature.view.*
@@ -53,7 +53,7 @@ class CreatureWithFoodAdapter(private val creatures: MutableList<Creature>): Rec
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val holder = ViewHolder(parent.inflate(R.layout.list_item_creature_with_food))
+        val holder = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_creature_with_food, parent, false))
         holder.itemView.foodRecyclerView.setRecycledViewPool(viewPool)
         LinearSnapHelper().attachToRecyclerView(holder.itemView.foodRecyclerView)
         return holder

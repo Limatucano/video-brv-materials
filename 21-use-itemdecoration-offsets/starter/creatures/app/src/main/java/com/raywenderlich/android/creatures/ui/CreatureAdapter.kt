@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CompositeItem
 import com.raywenderlich.android.creatures.model.Creature
+import com.raywenderlich.android.creatures.model.Favorites
 import kotlinx.android.synthetic.main.list_item_creature.view.*
 import kotlinx.android.synthetic.main.list_item_planet_header.view.*
 import java.util.*
@@ -126,6 +127,12 @@ class CreatureAdapter(
         //Favorites.saveFavorites(compositeItems.map { it.creature.id }, recyclerView.context)
         notifyItemMoved(fromPosition, toPosition)
         return true
+    }
+
+    override fun onItemDismiss(viewHolder: RecyclerView.ViewHolder, position: Int) {
+        Favorites.removeFavorite(compositeItems[position].creature, viewHolder.itemView.context)
+        compositeItems.removeAt(position)
+        notifyItemRemoved(position)
     }
 
 }

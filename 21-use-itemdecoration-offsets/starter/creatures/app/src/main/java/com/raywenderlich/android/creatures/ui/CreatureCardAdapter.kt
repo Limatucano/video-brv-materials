@@ -163,5 +163,9 @@ class CreatureCardAdapter(
         return true
     }
 
+    override fun onItemDismiss(viewHolder: RecyclerView.ViewHolder, position: Int) {
+
+    }
+
 
 }

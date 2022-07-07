@@ -13,7 +13,7 @@ class ItemTouchHelperCallback(private val listener: ItemTouchHelperListener, pri
         viewHolder: RecyclerView.ViewHolder
     ): Int = when(gridState){
         GridState.GRID -> makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT, 0)
-        GridState.LIST -> makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+        GridState.LIST -> makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START or ItemTouchHelper.END)
     }
 
     override fun onMove(
@@ -24,7 +24,9 @@ class ItemTouchHelperCallback(private val listener: ItemTouchHelperListener, pri
         return listener.onItemMove(recyclerView, viewHolder.adapterPosition, target.adapterPosition)
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        listener.onItemDismiss(viewHolder,viewHolder.adapterPosition)
+    }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         if(actionState != ItemTouchHelper.ACTION_STATE_IDLE){
@@ -41,4 +43,6 @@ class ItemTouchHelperCallback(private val listener: ItemTouchHelperListener, pri
             viewHolder.onItemCleared()
         }
     }
+
+    override fun isItemViewSwipeEnabled(): Boolean = true
 }

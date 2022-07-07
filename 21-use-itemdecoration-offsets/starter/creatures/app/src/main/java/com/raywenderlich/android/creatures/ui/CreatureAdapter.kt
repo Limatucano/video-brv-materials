@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CompositeItem
 import com.raywenderlich.android.creatures.model.Creature
+import com.raywenderlich.android.creatures.model.Favorites
 import kotlinx.android.synthetic.main.list_item_creature.view.*
 import kotlinx.android.synthetic.main.list_item_planet_header.view.*
+import java.util.*
 
-class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): RecyclerView.Adapter<CreatureAdapter.ViewHolder>() {
+class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): RecyclerView.Adapter<CreatureAdapter.ViewHolder>(), ItemTouchHelperListener {
 
     enum class ViewType {
         HEADER, CREATURE
@@ -78,6 +80,25 @@ class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>): R
         this.compositeItems.clear()
         this.compositeItems.addAll(creatures)
         notifyDataSetChanged()
+    }
+
+    override fun onItemMove(
+        recyclerView: RecyclerView,
+        fromPosition: Int,
+        toPosition: Int
+    ): Boolean {
+        if(fromPosition < toPosition){
+            for(i in fromPosition until toPosition){
+                Collections.swap(compositeItems, i, i + 1)
+            }
+        }else{
+            for(i in fromPosition downTo toPosition){
+                Collections.swap(compositeItems, i, i - 1)
+            }
+        }
+        Favorites.saveFavorites(compositeItems.map { it.creature.id }, recyclerView.context)
+        notifyItemMoved(fromPosition, toPosition)
+        return true
     }
 
 }

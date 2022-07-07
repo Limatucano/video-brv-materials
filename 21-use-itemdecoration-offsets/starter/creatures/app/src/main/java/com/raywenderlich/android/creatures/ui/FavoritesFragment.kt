@@ -36,6 +36,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CreatureStore
@@ -66,6 +67,7 @@ class FavoritesFragment : Fragment() {
           )
         )
     }
+    setupItemTouchHelper()
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -80,6 +82,11 @@ class FavoritesFragment : Fragment() {
         adapter.updateCreatures(it)
       }
     }
+  }
+
+  private fun setupItemTouchHelper() {
+    val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
+    itemTouchHelper.attachToRecyclerView(favoritesRecyclerView)
   }
 
 }

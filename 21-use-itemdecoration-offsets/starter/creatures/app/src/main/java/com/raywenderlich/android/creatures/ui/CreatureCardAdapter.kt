@@ -26,7 +26,7 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
         UP, DOWN
     }
     enum class ViewType {
-        JUPITER, OTHER
+        JUPITER, MARS, OTHER
     }
     var scrollDirection = ScrollDirection.DOWN
     var jupiterSpanSize = 2
@@ -95,6 +95,13 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
                 false
             )
         )
+        ViewType.MARS.ordinal -> ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.list_item_creature_card_mars,
+                parent,
+                false
+            )
+        )
         ViewType.OTHER.ordinal -> ViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.list_item_creature_card,
@@ -105,9 +112,10 @@ class CreatureCardAdapter(private val creatures: MutableList<Creature>): Recycle
         else -> throw IllegalArgumentException("invalid viewType")
     }
 
-    override fun getItemViewType(position: Int): Int {
-        val creature = creatures[position]
-        return if(creature.planet == Constants.JUPITER) ViewType.JUPITER.ordinal else ViewType.OTHER.ordinal
+    override fun getItemViewType(position: Int): Int = when(creatures[position].planet){
+        Constants.JUPITER -> ViewType.JUPITER.ordinal
+        Constants.MARS -> ViewType.MARS.ordinal
+        else -> ViewType.OTHER.ordinal
     }
 
     override fun getItemCount() = creatures.size

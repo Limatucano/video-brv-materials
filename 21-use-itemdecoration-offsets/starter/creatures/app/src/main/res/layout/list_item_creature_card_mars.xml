@@ -19,7 +19,7 @@
         android:id="@+id/creatureCardContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/creatureImage"
@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/padding_half"
-                android:text="@string/jupiter_slogan"
+                android:text="@string/mars_slogan"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/creature_card_slogan_size"
                 android:textStyle="bold" />
